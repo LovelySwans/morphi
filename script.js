@@ -1,4 +1,4 @@
-// Сцена, камера та рендерер
+// Налаштування сцени, камери та рендерера
 const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera(
     window.innerWidth / -2,
@@ -15,12 +15,12 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Завантаження текстур
 const textureLoader = new THREE.TextureLoader();
-const images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg'];
+const images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg'];
 
 let textures = images.map(image => textureLoader.load(image));
 let currentIndex = 0;
 
-// Матеріал і меш
+// Створення матеріалу
 const material = new THREE.ShaderMaterial({
     uniforms: {
         texture1: { value: textures[0] },
@@ -49,6 +49,7 @@ const material = new THREE.ShaderMaterial({
     transparent: true,
 });
 
+// Геометрія та меш
 const geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
@@ -58,7 +59,7 @@ let progress = 0;
 function animate() {
     requestAnimationFrame(animate);
 
-    progress += 0.01; // швидкість переходу
+    progress += 0.01; // Швидкість переходу
     if (progress > 1) {
         progress = 0;
         currentIndex = (currentIndex + 1) % textures.length;
@@ -72,7 +73,7 @@ function animate() {
 
 animate();
 
-// Автоматичне оновлення розмірів вікна
+// Автоматичне налаштування розміру
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.left = window.innerWidth / -2;

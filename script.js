@@ -16,7 +16,6 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // Завантаження текстур
 const textureLoader = new THREE.TextureLoader();
 const images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg'];
-
 let textures = images.map(image => textureLoader.load(image));
 let currentIndex = 0;
 
@@ -49,7 +48,6 @@ const material = new THREE.ShaderMaterial({
     transparent: true,
 });
 
-// Геометрія та меш
 const geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
@@ -73,7 +71,7 @@ function animate() {
 
 animate();
 
-// Автоматичне налаштування розміру
+// Автоматичне оновлення розмірів вікна
 window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     camera.left = window.innerWidth / -2;
@@ -81,4 +79,17 @@ window.addEventListener('resize', () => {
     camera.top = window.innerHeight / 2;
     camera.bottom = window.innerHeight / -2;
     camera.updateProjectionMatrix();
+});
+
+// Add GSAP to your project
+import { gsap } from "gsap";
+
+// Example animation using GSAP
+gsap.to(mesh.rotation, { duration: 2, x: Math.PI, y: Math.PI });
+
+// Apply uniform size settings dynamically to all images
+document.querySelectorAll('img').forEach(img => {
+  img.style.width = '100px';
+  img.style.height = '100px';
+  img.style.objectFit = 'cover';
 });

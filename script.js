@@ -16,7 +16,14 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 // Завантаження текстур
 const textureLoader = new THREE.TextureLoader();
 const images = ['1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg'];
-let textures = images.map(image => textureLoader.load(image));
+let textures = images.map(image => {
+    const texture = textureLoader.load(image, () => {
+        console.log(`Loaded texture: ${image}`);
+    }, undefined, (err) => {
+        console.error(`Error loading texture: ${image}`, err);
+    });
+    return texture;
+});
 let currentIndex = 0;
 
 // Створення матеріалу

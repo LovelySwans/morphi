@@ -15,7 +15,7 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 // Завантаження текстур
 const textureLoader = new THREE.TextureLoader();
-const images = ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg'];
+const images = ['1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg'];
 let textures = images.map(image => textureLoader.load(image));
 let currentIndex = 0;
 

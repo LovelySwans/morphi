@@ -1,4 +1,3 @@
-// Налаштування сцени, камери та рендерера
 const scene = new THREE.Scene();
 const camera = new THREE.OrthographicCamera(
     window.innerWidth / -2,
@@ -13,24 +12,29 @@ camera.position.z = 1;
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#meshingCanvas') });
 renderer.setSize(window.innerWidth, window.innerHeight);
 
-// Завантаження текстур
 const textureLoader = new THREE.TextureLoader();
-const images = ['1.jpeg', '2.jpeg', '3.jpeg', '4.jpeg', '5.jpeg', '6.jpeg'];
-let textures = images.map(image => {
-    const texture = textureLoader.load(image, () => {
-        console.log(`Loaded texture: ${image}`);
-    }, undefined, (err) => {
-        console.error(`Error loading texture: ${image}`, err);
-    });
-    return texture;
-});
-let currentIndex = 0;
+const images = ['./images/1.jpeg', './images/2.jpeg', './images/3.jpeg', './images/4.jpeg', './images/5.jpeg', './images/6.jpeg'];
 
-// Створення матеріалу
+let textures = [];
+let texturesLoaded = false;
+
+Promise.all(images.map(image => {
+    return new Promise((resolve, reject) => {
+        textureLoader.load(image, resolve, undefined, reject);
+    });
+})).then(loadedTextures => {
+    textures = loadedTextures;
+    texturesLoaded = true;
+    console.log("All textures loaded");
+    animate();
+}).catch(err => {
+    console.error("Error loading textures:", err);
+});
+
 const material = new THREE.ShaderMaterial({
     uniforms: {
-        texture1: { value: textures[0] },
-        texture2: { value: textures[1] },
+        texture1: { value: null },
+        texture2: { value: null },
         progress: { value: 0 },
     },
     vertexShader: `
@@ -59,12 +63,14 @@ const geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight);
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
-// Анімація змішування
 let progress = 0;
+let currentIndex = 0;
+
 function animate() {
+    if (!texturesLoaded) return;
     requestAnimationFrame(animate);
 
-    progress += 0.01; // Швидкість переходу
+    progress += 0.01;
     if (progress > 1) {
         progress = 0;
         currentIndex = (currentIndex + 1) % textures.length;
@@ -76,27 +82,14 @@ function animate() {
     renderer.render(scene, camera);
 }
 
-animate();
-
-// Автоматичне оновлення розмірів вікна
 window.addEventListener('resize', () => {
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    camera.left = window.innerWidth / -2;
-    camera.right = window.innerWidth / 2;
-    camera.top = window.innerHeight / 2;
-    camera.bottom = window.innerHeight / -2;
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    renderer.setSize(width, height);
+    camera.left = width / -2;
+    camera.right = width / 2;
+    camera.top = height / 2;
+    camera.bottom = height / -2;
     camera.updateProjectionMatrix();
-});
-
-// Add GSAP to your project
-import { gsap } from "gsap";
-
-// Example animation using GSAP
-gsap.to(mesh.rotation, { duration: 2, x: Math.PI, y: Math.PI });
-
-// Apply uniform size settings dynamically to all images
-document.querySelectorAll('img').forEach(img => {
-  img.style.width = '100px';
-  img.style.height = '100px';
-  img.style.objectFit = 'cover';
 });
